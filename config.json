@@ -1,5 +1,6 @@
 {
   "port": 55000,
+  "logLevel": 10,
   "username": "Python Service",
   "icon": ":ghost:"
 }
