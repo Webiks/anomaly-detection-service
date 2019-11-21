@@ -14,12 +14,12 @@ def send_to_slack(webhook_url, data, user, icon):
                          .format(response.status_code, response.text))
 
 
-if __name__ == "__main__":
-    try:
-        webhook_url = 'https://hooks.slack.com/services/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'
-        data = "hello from python"
-        send_to_slack(webhook_url, data)
-        print('sent to slack')
-    except Exception as ex:
-        print('failed to send to slack')
-        print(ex)
+# if __name__ == "__main__":
+#     try:
+    #     webhook_url = 'https://hooks.slack.com/services/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'
+    #     data = "hello from python"
+    #     send_to_slack(webhook_url, data)
+    #     print('sent to slack')
+    # except Exception as ex:
+    #     print('failed to send to slack')
+    #     print(ex)

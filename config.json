@@ -1,6 +1,16 @@
 {
-  "port": 55000,
-  "logLevel": 10,
-  "username": "Python Service",
-  "icon": ":ghost:"
+  "server": {
+    "port": 55000,
+    "debug": true
+  },
+  "logger": {
+    "logLevel": "DEBUG",
+    "filename": "app.log",
+    "logFormat": "[%(asctime)s] [%(name)s] [%(levelname)s] %(message)s"
+  },
+  "cron": {
+    "setInterval": 12
+  },
+  "username": "Anomaly",
+  "icon": ":webbeast:"
 }

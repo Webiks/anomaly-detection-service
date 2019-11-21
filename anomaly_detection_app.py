@@ -1,3 +1,7 @@
 from app import app
 
-app.run(host='0.0.0.0', port=app.port, debug=True)
+from app.config import Config
+cfg = Config.getInstance().cfg
+print(__name__, cfg)
+
+app.run(host='0.0.0.0', port=cfg.server.port, debug=cfg.server.debug)

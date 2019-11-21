@@ -1,19 +1,27 @@
 import argparse
+import logging
 from app import app
+from app.config import Config
 from app.slack.slack import send_to_slack
 from app.elastic.elasticpy import download_json
 from flask import make_response, jsonify, request
 
+cfg = Config.getInstance().cfg
+logger = logging.getLogger(__name__)
+logger.info(cfg)
+
 
 @app.route('/health')
 def health():
+    logger.info(request.environ['REMOTE_ADDR'])
     return 'Server is up & running'
 
 
 @app.route('/slack', methods=['POST', 'GET'])
 def parse_request():
     data = request.form['payload']
-    send_to_slack(webhook_url, data, user, icon)
+    logger.info('Message: \"{}\" sent by {}' .format(data, cfg.username))
+    send_to_slack(app.webhook_url, data, cfg.username, cfg.icon),
     return 'message sent to Slack'
 
 
@@ -51,4 +59,10 @@ def upload():
 
 @app.errorhandler(404)
 def not_found(error):
+    logger.error(error)
     return make_response(jsonify({'error': 'Not found'}), 404)
+
+@app.errorhandler(500)
+def not_found(error):
+    logger.error(error)
+    return make_response(jsonify({'error': 'Internal Server Error'}), 500)
