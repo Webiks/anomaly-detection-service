@@ -1,7 +1,7 @@
 {
   "server": {
     "port": 55000,
-    "debug": true
+    "debug": false
   },
   "logger": {
     "logLevel": "DEBUG",

@@ -4,7 +4,8 @@ import logging
 from flask import Flask
 from dotenv import load_dotenv
 from app.config import Config
-from app.cron.scheduler import start_cron
+from app.cron.scheduler import Scheduler
+from app.ml.model import load
 
 cfg = Config().cfg
 
@@ -25,12 +26,12 @@ logger.addHandler(fh)
 logger.addHandler(ch)
 
 app = Flask(__name__)
+
+app.rt = Scheduler(cfg.cron.setInterval, load, "Elastic")
+logger.info(app.rt)
+
 load_dotenv()
 app.webhook_url = os.getenv("WEBHOOKURL")
-
-start_cron(cfg.cron.setInterval)
-
-
 
 from app import routes
 

@@ -1,10 +1,12 @@
-import argparse
 import logging
+import argparse
+import threading
 from app import app
 from app.config import Config
 from app.slack.slack import send_to_slack
 from app.elastic.elasticpy import download_json
 from flask import make_response, jsonify, request
+
 
 cfg = Config.getInstance().cfg
 logger = logging.getLogger(__name__)
@@ -15,6 +17,23 @@ logger.info(cfg)
 def health():
     logger.info(request.environ['REMOTE_ADDR'])
     return 'Server is up & running'
+
+
+@app.route('/model/run', methods=['POST'])
+def run():
+    logger.info(request.environ['REMOTE_ADDR'])
+    start = request.form['from']
+    end = request.form['to']
+    logger.info('Model is running from {} to {}' .format(start, end))
+    #
+    return 'Model is running from {} to {}' .format(start, end)
+
+
+@app.route('/model/stop', methods=['GET'])
+def stop_model():
+    logger.info('The model has been stopped by {}' .format(request.environ['REMOTE_ADDR']))
+    app.rt.stop()
+    return 'The model has been stopped.'
 
 
 @app.route('/slack', methods=['POST', 'GET'])
