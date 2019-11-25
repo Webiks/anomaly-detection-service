@@ -1,0 +1,50 @@
+{
+  "server": {
+    "port": 55000,
+    "debug": false
+  },
+
+  "logger": {
+    "logLevel": "DEBUG",
+    "filename": "./data/app.log",
+    "logFormat": "[%(asctime)s] [%(name)s] [%(levelname)s] %(message)s"
+  },
+
+ "slack": {
+   "username": "Anomaly",
+   "icon": ":webbeast:",
+   "url": "http://localhost"
+ },
+
+  "cron": {
+    "setInterval": 12
+  },
+
+  "model" : {
+    "pathname": "./data/model_V0.clf"
+  },
+
+  "elasticsearch": {
+    "host": "elastic.monitor.net",
+    "port": 9200
+  },
+
+  "elastic_auth": {
+    "un": "elastic",
+    "pw": "changeme"
+  },
+
+  "anomaly_index": {
+    "name": "comic",
+    "settings": {
+      "number_of_shards": 2
+    }
+  },
+
+  "data_args": {
+    "index": "metricbeat-*",
+    "from_time": "now-5m",
+    "to_time": "now",
+    "options_path": "./data/options.json"
+  }
+}
