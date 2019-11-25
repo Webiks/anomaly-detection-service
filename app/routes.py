@@ -6,11 +6,12 @@ from app.config import Config
 from app.slack.slack import send_to_slack
 from app.elastic.elasticpy import download_json
 from flask import make_response, jsonify, request
+from app.handlers.anomaly_handler import publish_anomaly
 
 
 cfg = Config.getInstance().cfg
 logger = logging.getLogger(__name__)
-logger.info(cfg)
+
 
 
 @app.route('/health')
@@ -44,8 +45,12 @@ def parse_request():
     return 'message sent to Slack'
 
 
-@app.route('/elastic', methods=['GET'])
-def download():
+@app.route('/elastic/predict', methods=['GET'])
+def predict():
+    logger.info(request.environ['REMOTE_ADDR'])
+    run_predict()
+    return 'Server is up & running'
+
     parser = argparse.ArgumentParser(description='Download elastic search last X minutes on an index')
     parser.add_argument('--path', '-o', help='JSON output path', type=str, default="../elastic.json", required=False)
     parser.add_argument('--index', '-i', help="ElasticSearch index", type=str, default='metricbeat-*', required=False)
@@ -60,21 +65,13 @@ def download():
     download_json(**vars(args))
     return 'Get data from Elasticsearch'
 
-@app.route('/elastic', methods=['POST'])
-def upload():
-    parser = argparse.ArgumentParser(description='Download elastic search last X minutes on an index')
-    parser.add_argument('--path', '-o', help='JSON output path', type=str, default="../elastic.json", required=False)
-    parser.add_argument('--index', '-i', help="ElasticSearch index", type=str, default='metricbeat-*', required=False)
-    parser.add_argument('--lastMinutes', '-m', help="Last minutes to get data for", dest='last_minutes', type=int, default=5, required=False)
-    parser.add_argument('--host', '-a', help="ElasticSearch Host's ip/address", type=str, default='elastic.monitor.net', required=False)
-    parser.add_argument('--port', '-p', help="ElasticSearch Host's port", type=int, default=9200, required=False)
-    parser.add_argument('--user', '-u', help="ElasticSearch username", type=str, default='elastic', required=False)
-    parser.add_argument('--password', '-pw', help="ElasticSearch username's password", type=str, default='changeme', required=False)
 
-    args = parser.parse_args()
-    print(args)
-    download_json(**vars(args))
-    return 'Get data from Elasticsearch'
+@app.route('/elastic/alert', methods=['POST'])
+def alert():
+    logger.info(request.environ['REMOTE_ADDR'])
+    publish_anomaly()
+    return 'Server is up & running'
+
 
 @app.errorhandler(404)
 def not_found(error):
