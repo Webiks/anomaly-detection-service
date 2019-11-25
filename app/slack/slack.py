@@ -1,6 +1,10 @@
+import logging
 import json
 import requests
+from app.config import Config
 
+cfg = Config.getInstance().cfg
+logger = logging.getLogger(__name__)
 
 # https://worspace.slack.com/services/new/incoming-webhook/
 def send_to_slack(webhook_url, data, user, icon):
