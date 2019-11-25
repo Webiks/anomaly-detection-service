@@ -4,7 +4,7 @@ from app.utils import dotdict
 
 class Config:
     __instance = None
-    with open('config.json') as config:
+    with open('./data/config.json') as config:
         cfg = dotdict.dotdict(json.load(config))
 
     @staticmethod
