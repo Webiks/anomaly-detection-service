@@ -1,33 +1,45 @@
-import pandas as pd
-from joblib import load
 import os
 import re
+import logging
+
+import pandas as pd
+
+from joblib import load
 from sklearn import preprocessing
 from app.model.get_data import get_data as get_elastic_data
 
-
-def load_model(path):
-    clf = load(path)
-    return clf
-
-
+d = {}
 # model function
 le = {}
 host_name_prefix = 'comp'
+logger = logging.getLogger(__name__)
+
+
+def load_model(path):
+    try:
+        clf = load(path)
+        return clf
+    except Exception as e:
+        logger.error(e, expert=d)
 
 
 def remove_illegal_path_chars(path):
     return re.sub(r'[\\/\:*"<>\|\.%\$\^&£]', '', path)
 
 
-def get_input(index, from_time, to_time, host, port, user, password, options, save_to_file=True, load_from_file=True, base_path=None):
+def get_input(traceId, index, from_time, to_time, host, port, user, password,
+              options, save_to_file=True, load_from_file=True, base_path=None):
+    d = {'trace': traceId}
     file_path = f'train_{remove_illegal_path_chars(from_time)}_{remove_illegal_path_chars(to_time)}.json'
     full_path = os.path.join(base_path, file_path) if base_path else file_path
     if load_from_file and os.path.exists(full_path):
-        print('Loading data from file')
+        logger.info(f' Loading data from file...', extra=d)
         X = pd.read_json(full_path)
     else:
-        print('Getting data from elasticsearch')
+        logger.info(f'Getting data from elasticsearch...', extra=d)
+        logger.debug(f'Getting data from elasticsearch with index: {index} from_time: {from_time} '
+                     f'to_time: {to_time} host: {host} port: {port} '
+                     f'user: {user} password: {password} and options {options}', extra=d)
         X = get_elastic_data(index, from_time, to_time, host, port, user, password, options)
         if X is not None:
             X['timestamp'] = X['timestamp'].astype('int64') * 1000000
@@ -69,11 +81,15 @@ def convert_categorical_to_int(data, le, train_le=True):
     data[categorical_cols] = data[categorical_cols].astype(int)
 
 
-def get_data(index, from_time, to_time, host, port, user, password, options):
-    data = get_input(index, from_time, to_time, host, port, user,
+def get_data(traceId, index, from_time, to_time, host, port, user, password, options):
+    d = {'trace': traceId}
+    logger.debug(f'Get data with index: {index} from: {from_time} to: {to_time} '
+                 f'host: {host} port: {port} user: {user} password: {password} and options: {options}', extra=d)
+    data = get_input(traceId, index, from_time, to_time, host, port, user,
                      password, options, save_to_file=False, load_from_file=False)
-    data = add_features_n_NA(data)
-    convert_categorical_to_int(data, le, True)  # TODO solve categorical indexing mismatch with training (ok for demo)
+    if data is not None:
+        data = add_features_n_NA(data)
+        convert_categorical_to_int(data, le, True)  # TODO solve categorical indexing mismatch with training (ok for demo)
     return data
 
 

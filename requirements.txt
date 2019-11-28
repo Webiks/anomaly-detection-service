@@ -10,3 +10,4 @@ timeloop>=1.0.2
 elasticsearch>=7.1.0
 elasticsearch-dsl>=7.1.0
 pandas>=0.25.3
+uuid>=1.30

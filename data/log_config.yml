@@ -1,0 +1,37 @@
+version: 1
+
+filters:
+  traceId:
+    (): app.config.TraceIdFilter
+
+formatters:
+  standard:
+    format: "[%(asctime)s] [%(trace)s] [%(name)s] [%(levelname)s] %(message)s"
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: standard
+    filters: [traceId]
+    stream: ext://sys.stdout
+
+  debug_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: standard
+    filename: ./data/app.log
+    maxBytes: 10485760 # 10MB
+    backupCount: 5
+    encoding: utf8
+    filters: [traceId]
+
+root:
+  level: DEBUG
+  handlers: [console, debug_file_handler]
+
+loggers:
+  sampleLogger:
+    level: DEBUG
+    handlers: [console, debug_file_handler]
+    propagate: no

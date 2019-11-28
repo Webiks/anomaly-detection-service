@@ -1,40 +1,32 @@
 import logging
-from app.config import Config
+
 from datetime import datetime
+
+from app.config import Config
 from app.elastic.anomaly import Anomaly
 from elasticsearch_dsl import connections
+from elasticsearch.helpers import bulk
 
-cfg = Config.getInstance().cfg
+cfg = Config.get_instance().cfg
 logger = logging.getLogger(__name__)
 
 hosts = [cfg.elasticsearch]
-logger.debug('Host: {}' .format(hosts))
-
-http_auth = (cfg.elastic_auth.un, cfg.elastic_auth.pw)
-logger.debug('http_auth: {}' .format(http_auth))
-
+http_auth = (cfg.elasticsearch.username, cfg.elasticsearch.password)
 connections.create_connection(hosts=hosts, http_auth=http_auth)
 
 
-predicts = {
-    'host': 'Comp_20',
-    'time': datetime.now(),
-    'source': 'anomaly defecation model'
-}
+def publish_anomalies(traceId, anomalies):
+    d = {'trace': traceId}
+    try:
+        connection = connections.get_connection()
+        documents = [Anomaly(host=row.host, event_time=row.timestamp, source=cfg.model.name,
+                             timestamp=datetime.utcnow()).to_dict(True) for index, row in anomalies.iterrows()]
 
+        logger.debug(f'Bulk inset of documents {documents}', extra=d)
 
-def publish_anomaly():
+        if len(documents) > 0:
+            bulk(connection, documents)
 
-    Anomaly.init()
+    except Exception as e:
+        logger.error(e, extra=d)
 
-    logger.debug(predicts)
-    anomaly = Anomaly(host=predicts.get('host'),
-                      event_time=predicts.get('time'), source=predicts.get('source'), timestamp=datetime.now())
-    anomaly.save()
-
-    # anomaly = Anomaly.get(id=142)
-    # logger.info(anomaly.is_published())
-    # logger.debug(anomaly)
-    #
-    # # Display cluster health
-    # logger.debug(connections.get_connection().cluster.health())
