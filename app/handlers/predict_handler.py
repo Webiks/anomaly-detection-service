@@ -15,8 +15,8 @@ d = {}
 
 try:
     options = json.load(open(cfg.data_args.options_path))
-except Exception as e:
-    logger.error(e, expert=d)
+except Exception as ex:
+    logger.fatal(ex, expert=d)
 
 
 
@@ -30,20 +30,29 @@ def run_in_thread(traceId, model, from_time, to_time):
         logger.warning(f'There are no data to analyze...  ', extra=d)
     else:
         logger.info(f'Predicting on DataFrame...', extra=d)
+
         pred, outlier, anomalies = predict(model, data)
 
-        size = anomalies.size
-        anomalies = anomalies.sort_values(by=['host', 'timestamp'], ascending=[True, False])
+        if anomalies is None:
+            logging.info(f'No anomalies found...', extra=d)
+            logging.debug(f'o anomalies found', extra=d)
+        else:
+            size = anomalies.size
+            anomalies = anomalies.sort_values(by=[cfg.model.column[0], cfg.model.column[1]],
+                                              ascending=[cfg.model.ascending[0], cfg.model.ascending[1]])
 
-        logger.info(f'publishing prediction...', extra=d)
-        logger.debug(f'Save anomalies into elastic:  {anomalies}', extra=d)
-        publish_anomalies(traceId, anomalies)
+            logger.info(f'publishing prediction...', extra=d)
+            logger.debug(f'Save anomalies into elastic:  {anomalies}', extra=d)
+            publish_anomalies(traceId, anomalies)
 
-        msg = str(size) + cfg.slack.message  # TODO get message from config
-        index = msg.find(' |')
-        msg = msg[:index] + cfg.slack.link2kibana + msg[index:]
-        logger.debug(f'Sending message to Slack from user: {cfg.slack.username} and text: {msg}', extra=d)
-        send_to_slack(cfg.slack.webhook, msg, cfg.slack.username, cfg.slack.icon)
+            try:
+                msg = f'{str(size)} {cfg.slack.message}'
+                index = msg.find(' |')
+                msg = f'{msg[:index]} {cfg.slack.link2kibana} {msg[index:]}'
+                logger.debug(f'Sending message to Slack from user: {cfg.slack.username} and text: {msg}', extra=d)
+                send_to_slack(cfg.slack.webhook, msg, cfg.slack.username, cfg.slack.icon)
+            except Exception as ex:
+                logging.warning(ex, extra=d)
 
     logger.debug(f'Thread is done', extra=d)
 

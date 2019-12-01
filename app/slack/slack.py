@@ -15,5 +15,5 @@ def send_to_slack(webhook, data, user, icon):
     headers = {'Content-Type': 'application/json'}
     response = requests.post(webhook, data=data, headers=headers)
     if response.status_code != 200:
-        raise ValueError('Request to slack returned an error {}, the response is:\n{}'
-                         .format(response.status_code, response.text))
+        raise ValueError(f'Request to slack returned an error {response.status_code}, '
+                         f'the response is:\n{response.text}')

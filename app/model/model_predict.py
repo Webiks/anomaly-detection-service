@@ -39,7 +39,7 @@ def get_input(traceId, index, from_time, to_time, host, port, user, password,
         logger.info(f'Getting data from elasticsearch...', extra=d)
         logger.debug(f'Getting data from elasticsearch with index: {index} from_time: {from_time} '
                      f'to_time: {to_time} host: {host} port: {port} '
-                     f'user: {user} password: {password} and options {options}', extra=d)
+                     f'user: {user} password: ******** and options {options}', extra=d)
         X = get_elastic_data(index, from_time, to_time, host, port, user, password, options)
         if X is not None:
             X['timestamp'] = X['timestamp'].astype('int64') * 1000000
@@ -84,7 +84,7 @@ def convert_categorical_to_int(data, le, train_le=True):
 def get_data(traceId, index, from_time, to_time, host, port, user, password, options):
     d = {'trace': traceId}
     logger.debug(f'Get data with index: {index} from: {from_time} to: {to_time} '
-                 f'host: {host} port: {port} user: {user} password: {password} and options: {options}', extra=d)
+                 f'host: {host} port: {port} user: {user} password: ******** and options: {options}', extra=d)
     data = get_input(traceId, index, from_time, to_time, host, port, user,
                      password, options, save_to_file=False, load_from_file=False)
     if data is not None:

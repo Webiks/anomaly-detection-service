@@ -6,7 +6,7 @@ filters:
 
 formatters:
   standard:
-    format: "[%(asctime)s] [%(trace)s] [%(name)s] [%(levelname)s] %(message)s"
+    format: "[%(asctime)s] [%(trace)-16s] [%(filename)17s:%(lineno)-4d] [%(levelname)7s] %(message)s"
 
 handlers:
   console:

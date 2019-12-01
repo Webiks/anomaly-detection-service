@@ -24,7 +24,9 @@
 
   "model" : {
     "name": "Isolated Forest Model",
-    "pathname": "./data/model_V0_c0.001.clf"
+    "pathname": "./data/model_V0_c0.001.clf",
+    "column": ["host", "timestamp"],
+    "ascending": ["True", "False"]
   },
 
   "elasticsearch": {

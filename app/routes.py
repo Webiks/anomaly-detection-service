@@ -1,7 +1,7 @@
 import uuid
 import logging
 
-from flask import make_response, jsonify, request
+from flask import make_response, jsonify, request, abort
 
 from app import app
 from app.config import Config
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 def health():
     traceId = uuid.uuid4()
     d = {'trace': traceId}
-    logger.info(f'health request from {request.environ["REMOTE_ADDR"]}', extra=d)
+    logger.debug(f'health request from {request.environ["REMOTE_ADDR"]}', extra=d)
     return 'Server is up & running'
 
 
@@ -25,21 +25,20 @@ def health():
 def predict():
     traceId = uuid.uuid4()
     d = {'trace': traceId}
-    # TODO create unique id and return it ASAP to caller (run predict in thread/async)
     logger.debug(f'Message was sent from {request.environ["REMOTE_ADDR"]} '
                 f'with url {request.url} and payload {request.get_json()}', extra=d)
 
     if not request.is_json:
-        return f'Request is not containing a JSON payload'
+        abort(400, f'Request is not containing a JSON payload')
 
     message = request.get_json()
     if 'from_time' not in message:
-        logger.debug(f'Parameter \"from_time\" is required !!!')
-        return f'Parameter \"from_time\" is required!'
+        logger.debug(f'Parameter \"from_time\" is required !!!', extra=d)
+        abort(400, f'Parameter \"from_time\" is required!')
 
     if 'to_time' not in message:
-        logger.debug(f'Parameter \"to_time\" is required !!!')
-        return f'Parameter \"to_time\" is required! '
+        logger.debug(f'Parameter \"to_time\" is required !!!', extra=d)
+        abort(400, f'Parameter \"to_time\" is required! ')
 
     from_time = message['from_time']
     to_time = message['to_time']
@@ -52,8 +51,8 @@ def predict():
 def get_interval():
     traceId = uuid.uuid4()
     d = {'trace': traceId}
-    interval = app.scheduler.get_interval()
-    logger.info(f'The scheduler run on interval of {interval}sec... '
+    interval = app.scheduler.interval
+    logger.debug(f'The scheduler run on interval of {interval}sec... '
                 f'Request from {request.environ["REMOTE_ADDR"]}', extra=d)
     return f'The scheduler run on interval of {interval}sec'
 
@@ -62,7 +61,7 @@ def get_interval():
 def stop_model():
     traceId = uuid.uuid4()
     d = {'trace': traceId}
-    logger.info(f'The scheduler with interval of {app.scheduler.interval}sec '
+    logger.debug(f'The scheduler with interval of {app.scheduler.interval}sec '
                 f'has been stopped by {request.environ["REMOTE_ADDR"]}', extra=d)
     app.scheduler.stop()
     return f'The scheduler has been stopped.'
@@ -70,37 +69,41 @@ def stop_model():
 
 @app.route('/model/scheduler/start', methods=['POST'])
 def start_model():
-    # TODO add start scheduler + get scheduler interval
     traceId = uuid.uuid4()
     d = {'trace': traceId}
 
+    interval = app.scheduler.interval
     if request.is_json:
         message = request.get_json()
         if 'interval' in message:
             interval = message['interval']
-            logger.info(f'The scheduler with interval of {interval}sec '
-                f'has been started by {request.environ["REMOTE_ADDR"]}', extra=d)
-            app.scheduler.set_interval(interval)
 
-    app.scheduler.start()
-    return f'The scheduler start with interval of {app.scheduler.get_interval()}sec '
+    logger.debug(f'The scheduler with interval of {interval}sec '
+                 f'has been started by {request.environ["REMOTE_ADDR"]}', extra=d)
+    app.scheduler.start(interval)
+    return f'The scheduler start with interval of {app.scheduler.interval}sec'
 
 
 if cfg.server.test_mode:
-    @app.route('/elastic', methods=['POST'])
-    def alert():
-        logger.info(request.environ['REMOTE_ADDR'])
+    @app.route('/test/elastic', methods=['POST'])
+    def test_elastic():
+        logger.debug(request.environ['REMOTE_ADDR'], extra=d)
         publish_anomalies()
         return 'Server is up & running'
 
 
-    @app.route('/slack', methods=['POST', 'GET'])
-    def parse_request():
+    @app.route('/test/slack', methods=['POST', 'GET'])
+    def test_slack():
         data = request.form['payload']
-        logger.info('Message: \"{}\" sent by {}'.format(data, cfg.username))
-        send_to_slack(app.webhook_url, data, cfg.username, cfg.icon),
+        logger.debug(f'Message: \"{data}\" sent by {cfg.slack.username}', extra=d)
+        send_to_slack(cfg.slack.webhook, data, cfg.slack.username, cfg.slack.icon),
         return 'message sent to Slack'
 
+
+@app.errorhandler(400)
+def bad_request(error):
+    logger.error(error)
+    return make_response(jsonify({'error': 'Bad Request'}), 400)
 
 @app.errorhandler(404)
 def not_found(error):
