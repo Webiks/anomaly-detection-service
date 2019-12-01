@@ -48,7 +48,7 @@ def run_in_thread(traceId, model, from_time, to_time):
             try:
                 msg = f'{str(size)} {cfg.slack.message}'
                 index = msg.find(' |')
-                msg = f'{msg[:index]} {cfg.slack.link2kibana} {msg[index:]}'
+                msg = msg[:index] + cfg.slack.link2kibana + msg[index:]
                 logger.debug(f'Sending message to Slack from user: {cfg.slack.username} and text: {msg}', extra=d)
                 send_to_slack(cfg.slack.webhook, msg, cfg.slack.username, cfg.slack.icon)
             except Exception as ex:
