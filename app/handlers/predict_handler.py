@@ -19,7 +19,6 @@ except Exception as ex:
     logger.fatal(ex, expert=d)
 
 
-
 def run_in_thread(traceId, model, from_time, to_time):
     d = {'trace': traceId}
     logger.debug(f'A new thread was spawned... Model is running from: {from_time} to: {to_time}', extra=d)
