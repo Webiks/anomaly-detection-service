@@ -21,5 +21,4 @@ COPY ./s2i/bin/ /usr/app/libexec/s2i
 # copy project
 COPY . /usr/app/
 
-EXPOSE 56000
 CMD [ "python", "anomaly_detection_app.py" ]
