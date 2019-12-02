@@ -4,6 +4,9 @@ import pandas as pd
 
 import elasticsearch
 import elasticsearch_dsl
+from elasticsearch import logger as es_logger
+
+es_logger.setLevel(20)
 
 from app.model.elastic_agg_to_df import build_generic_aggregations_dataframe
 
@@ -118,9 +121,15 @@ def get_data(index, from_time, to_time, host, port, user, password, options):
         hosts = [{"host": host, "port": port}]
         http_auth = (user, password)
         elastic_client = elasticsearch.Elasticsearch(hosts=hosts, http_auth=http_auth)
+        es_logger.debug(elastic_client)
+
         search = elasticsearch_dsl.Search(using=elastic_client)
+        es_logger.debug(search)
+
         search, count_fields, extended_fields, iqr_fields = build_query(search, index, from_time, to_time, options)
         response = search.execute()
+        es_logger.debug(search)
+
         if len(response.aggregations.timestamp.buckets) == 0:
             return None
         df = build_generic_aggregations_dataframe(response, count_fields, extended_fields)
