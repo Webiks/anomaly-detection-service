@@ -6,11 +6,18 @@ import elasticsearch
 import elasticsearch_dsl
 from elasticsearch import logger as es_logger
 
+from app.config import Config
 from app.model.elastic_agg_to_df import build_generic_aggregations_dataframe
 
+d = {}
+cfg = Config.get_instance().cfg
 logger = logging.getLogger(__name__)
+logger.setLevel(10)
+print(logger)
 
-print(f'es_logger.level {es_logger.level}')
+
+es_logger.setLevel(10)
+
 
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
@@ -121,14 +128,14 @@ def get_data(index, from_time, to_time, host, port, user, password, options):
         hosts = [{"host": host, "port": port}]
         http_auth = (user, password)
         elastic_client = elasticsearch.Elasticsearch(hosts=hosts, http_auth=http_auth)
-        logger.debug(elastic_client)
+        logger.debug(f'Elastic Client: {elastic_client}', extra=d)
 
         search = elasticsearch_dsl.Search(using=elastic_client)
-        logger.debug(search)
+        logger.debug(f'Elastic Search: {search.query}', extra=d)
 
         search, count_fields, extended_fields, iqr_fields = build_query(search, index, from_time, to_time, options)
         response = search.execute()
-        logger.debug(search)
+        logger.debug(f'Elastic Response: {response.aggregations}', extra=d)
 
         if len(response.aggregations.timestamp.buckets) == 0:
             return None
@@ -143,8 +150,6 @@ def get_data(index, from_time, to_time, host, port, user, password, options):
     except Exception as e:
         logger.error(e)
         # raise Exception(ex + ' - Invalid results from elastic, check query')
-
-
 
 
 def download_json(path, index, last_minutes, host, port, user, password, options):

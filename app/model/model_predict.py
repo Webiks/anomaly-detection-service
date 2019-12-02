@@ -9,6 +9,9 @@ from sklearn import preprocessing
 from app.config import Config
 from app.model.get_data import get_data as get_elastic_data
 
+from elasticsearch import logger as es_logger
+es_logger.setLevel(10)
+
 d = {}
 cfg = Config.get_instance().cfg
 logger = logging.getLogger(__name__)
@@ -38,7 +41,7 @@ def get_input(traceId, index, from_time, to_time, host, port, user, password,
     if load_from_file and os.path.exists(full_path):
         try:
             logger.info(f'Loading data from json file: {full_path}', extra=d)
-            X = pd.read_json(full_path)
+            X = pd.read_json(full_path)  # TODO document this
         except Exception as ex:
             logger.error(ex.__traceback__, extra=d)
     else:
@@ -46,7 +49,7 @@ def get_input(traceId, index, from_time, to_time, host, port, user, password,
         logger.debug(f'Getting data from elasticsearch with index: {index} from_time: {from_time} '
                      f'to_time: {to_time} host: {host} port: {port} '
                      f'user: {user} password: {cfg.secret} and options {options}', extra=d)
-        X = get_elastic_data(index, from_time, to_time, host, port, user, password, options)
+        X = get_elastic_data(index, from_time, to_time, host, port, user, password, options)  # TODO document this
 
         if X is not None:
             X['timestamp'] = X['timestamp'].astype('int64') * 1000000
