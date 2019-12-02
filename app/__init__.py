@@ -1,6 +1,7 @@
 from app.config import Config  # Must be first
 import re
 import uuid
+import copy
 import logging
 
 from flask import Flask
@@ -15,12 +16,9 @@ d = {'trace': traceId}
 cfg = Config.get_instance().cfg
 logger = logging.getLogger(__name__)
 
-secret = '********'
-config = str(cfg)
-m = re.search('(slack.com/services/)(.*?)(\')', config)
-config = re.sub(m.group(2), secret, config)
-m = re.search('(password\': \')(.*?)(\')', config)
-config = re.sub(m.group(2), secret, config)
+config = copy.deepcopy(cfg)
+config.elasticsearch.password = cfg.secret
+config.slack.webhook = cfg.secret
 logger.info(f'Config: {config}', extra=d)
 
 app = Flask(__name__)

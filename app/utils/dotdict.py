@@ -1,4 +1,5 @@
 import json
+import copy
 
 
 # based on class dotdict(dict):  # from http://stackoverflow.com/questions/224026/dot-notation-for-dictionary-keys
@@ -16,6 +17,9 @@ class dotdict(dict):  # Similar to bunch, but less, and JSON-centric
 
     def __getattr__(self, attr):
         return self.get(attr, None)
+
+    def __deepcopy__(self, memo=None):
+        return dotdict(copy.deepcopy(dict(self), memo=memo))
 
     # from class Struct by XEye '11 http://stackoverflow.com/questions/1305532/convert-python-dict-to-object
     def _wrap(self, value):
