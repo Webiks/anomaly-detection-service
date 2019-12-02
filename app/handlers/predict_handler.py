@@ -26,7 +26,7 @@ def run_in_thread(traceId, model, from_time, to_time):
     data = get_data(traceId, cfg.data_args.index, from_time, to_time, cfg.elasticsearch.host,
                     cfg.elasticsearch.port, cfg.elasticsearch.username, cfg.elasticsearch.password, options)
     if data is None:
-        logger.warning(f'There are no data to analyze...  ', extra=d)
+        logger.warning(f'There is no data to analyze...  ', extra=d)
     else:
         logger.info(f'Predicting on DataFrame...', extra=d)
 

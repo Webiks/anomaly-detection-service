@@ -36,14 +36,18 @@ def get_input(traceId, index, from_time, to_time, host, port, user, password,
     file_path = f'train_{remove_illegal_path_chars(from_time)}_{remove_illegal_path_chars(to_time)}.json'
     full_path = os.path.join(base_path, file_path) if base_path else file_path
     if load_from_file and os.path.exists(full_path):
-        logger.info(f' Loading data from file...', extra=d)
-        X = pd.read_json(full_path)
+        try:
+            logger.info(f'Loading data from json file: {full_path}', extra=d)
+            X = pd.read_json(full_path)
+        except Exception as ex:
+            logger.error(ex.__traceback__, extra=d)
     else:
         logger.info(f'Getting data from elasticsearch...', extra=d)
         logger.debug(f'Getting data from elasticsearch with index: {index} from_time: {from_time} '
                      f'to_time: {to_time} host: {host} port: {port} '
                      f'user: {user} password: {cfg.secret} and options {options}', extra=d)
         X = get_elastic_data(index, from_time, to_time, host, port, user, password, options)
+
         if X is not None:
             X['timestamp'] = X['timestamp'].astype('int64') * 1000000
             if save_to_file:
