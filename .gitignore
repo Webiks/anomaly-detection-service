@@ -130,5 +130,4 @@ dmypy.json
 
 # project
 **/*.log
-**/*.clf
 *.log
