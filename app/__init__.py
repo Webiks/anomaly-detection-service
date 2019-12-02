@@ -1,5 +1,4 @@
 from app.config import Config  # Must be first
-import re
 import uuid
 import copy
 import logging
@@ -15,6 +14,7 @@ d = {'trace': traceId}
 
 cfg = Config.get_instance().cfg
 logger = logging.getLogger(__name__)
+logger = logging.LoggerAdapter(logger, extra)
 
 config = copy.deepcopy(cfg)
 config.elasticsearch.password = cfg.secret

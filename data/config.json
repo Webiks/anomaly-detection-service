@@ -10,7 +10,7 @@
     "username": "S.H.I.E.L.D",
     "icon": ":shield:",
     "webhook": "http://localhost:port/override/this/url/from/env/attr",
-    "message": " anomaly detection alerts were published in elastic. < {} |click hear> to view it on Kibana",
+    "message": " anomaly detection alerts were published in Elastic. <{}|click here> to view it on Kibana",
     "link2kibana": "http://localhost:port/override/this/url/from/env/attr"
   },
 
@@ -23,10 +23,10 @@
   },
 
   "model" : {
-    "name": "Isolated Forest Model",
+    "name": "Isolation Forest Model",
     "pathname": "./data/model_V0_c0.001.clf",
-    "column": ["host", "timestamp"],
-    "ascending": ["True", "False"]
+    "column": ["timestamp", "host"],
+    "ascending": ["False", "True"]
   },
 
   "elasticsearch": {

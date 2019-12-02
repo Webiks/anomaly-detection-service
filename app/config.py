@@ -32,6 +32,7 @@ class Config:
                 with open('./data/config.json') as json_file:
                     self.config = override(json.load(json_file))
                     self.cfg = dotdict.dotdict(self.config)
+
                 with open(self.cfg.logging.yaml, 'r') as yml:
                     conf = yaml.safe_load(yml.read())
                     logging.config.dictConfig(conf)

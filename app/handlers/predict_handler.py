@@ -32,9 +32,9 @@ def run_in_thread(traceId, model, from_time, to_time):
 
         pred, outlier, anomalies = predict(model, data)
 
-        if anomalies is None:
+        if anomalies.empty:
             logging.info(f'No anomalies found...', extra=d)
-            logging.debug(f'o anomalies found', extra=d)
+            logging.debug(f'No anomalies found', extra=d)
         else:
             size = anomalies.size
             anomalies = anomalies.sort_values(by=[cfg.model.column[0], cfg.model.column[1]],
@@ -45,10 +45,12 @@ def run_in_thread(traceId, model, from_time, to_time):
             publish_anomalies(traceId, anomalies)
 
             try:
-                msg = f'{str(size)} {cfg.slack.message}'
-                index = msg.find(' |')
-                msg = msg[:index] + cfg.slack.link2kibana + msg[index:]
+                msg = cfg.slack.message .format(cfg.slack.link2kibana)
+                msg = f'{str(size)} {msg}'
+
+                logging.debug(f'Construct a message for slack: {msg}', extra=d)
                 logger.debug(f'Sending message to Slack from user: {cfg.slack.username} and text: {msg}', extra=d)
+
                 send_to_slack(cfg.slack.webhook, msg, cfg.slack.username, cfg.slack.icon)
             except Exception as ex:
                 logging.warning(ex, extra=d)

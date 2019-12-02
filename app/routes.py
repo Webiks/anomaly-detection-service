@@ -80,6 +80,7 @@ def start_model():
 
     logger.debug(f'The scheduler with interval of {interval}sec '
                  f'has been started by {request.environ["REMOTE_ADDR"]}', extra=d)
+    app.scheduler.stop()
     app.scheduler.start(interval)
     return f'The scheduler start with interval of {app.scheduler.interval}sec'
 
