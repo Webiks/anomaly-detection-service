@@ -9,6 +9,9 @@ from app.cron.scheduler import Scheduler
 from app.model.model_predict import load_model
 from app.handlers.predict_handler import run_predict
 
+from elasticsearch import logger as es_logger
+es_logger.setLevel(20)
+
 traceId = uuid.uuid4()
 d = {'trace': traceId}
 
