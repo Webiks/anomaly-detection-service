@@ -1,0 +1,10 @@
+version: '3.7'
+
+services:
+  anomaly_detection:
+    image: webiks/anomaly-detection-app:latest
+    container_name: anomaly_detections
+    ports:
+      - 56000:56000
+    env_file:
+      - ./.env
