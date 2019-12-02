@@ -9,9 +9,6 @@ from sklearn import preprocessing
 from app.config import Config
 from app.model.get_data import get_data as get_elastic_data
 
-from elasticsearch import logger as es_logger
-es_logger.setLevel(10)
-
 d = {}
 cfg = Config.get_instance().cfg
 logger = logging.getLogger(__name__)

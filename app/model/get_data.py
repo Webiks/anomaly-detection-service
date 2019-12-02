@@ -4,7 +4,6 @@ import pandas as pd
 
 import elasticsearch
 import elasticsearch_dsl
-from elasticsearch import logger as es_logger
 
 from app.config import Config
 from app.model.elastic_agg_to_df import build_generic_aggregations_dataframe
@@ -12,12 +11,6 @@ from app.model.elastic_agg_to_df import build_generic_aggregations_dataframe
 d = {}
 cfg = Config.get_instance().cfg
 logger = logging.getLogger(__name__)
-logger.setLevel(10)
-print(logger)
-
-
-es_logger.setLevel(10)
-
 
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
@@ -127,6 +120,8 @@ def get_data(index, from_time, to_time, host, port, user, password, options):
         # options = json.load(open(options))
         hosts = [{"host": host, "port": port}]
         http_auth = (user, password)
+        logger.debug(f'Elastic Client prep with host: {hosts} and authentication: {http_auth}', extra=d)
+
         elastic_client = elasticsearch.Elasticsearch(hosts=hosts, http_auth=http_auth)
         logger.debug(f'Elastic Client: {elastic_client}', extra=d)
 
@@ -145,10 +140,10 @@ def get_data(index, from_time, to_time, host, port, user, password, options):
         return df
 
     except elasticsearch.ElasticsearchException as es:
-        logger.error(es)
+        logger.error(es.__traceback__)
 
-    except Exception as e:
-        logger.error(e)
+    except Exception as ex:
+        logger.error(ex.__traceback__)
         # raise Exception(ex + ' - Invalid results from elastic, check query')
 
 

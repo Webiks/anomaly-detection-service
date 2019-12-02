@@ -16,8 +16,8 @@ logger = logging.getLogger(__name__)
 @app.route('/health')
 def health():
     traceId = uuid.uuid4()
-    d = {'trace': traceId}
-    logger.debug(f'health request from {request.environ["REMOTE_ADDR"]}', extra=d)
+    extra = {'trace': traceId}
+    logger.debug(f'health request from {request.environ["REMOTE_ADDR"]}', extra)
     return 'Server is up & running'
 
 

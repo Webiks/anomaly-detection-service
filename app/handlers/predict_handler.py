@@ -8,10 +8,9 @@ from app.slack.slack import send_to_slack
 from app.model.model_predict import get_data, predict
 from app.handlers.anomaly_handler import publish_anomalies
 
-
+d = {}
 cfg = Config.get_instance().cfg
 logger = logging.getLogger(__name__)
-d = {}
 
 try:
     options = json.load(open(cfg.data_args.options_path))
