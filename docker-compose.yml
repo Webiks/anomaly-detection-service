@@ -3,8 +3,10 @@ version: '3.7'
 services:
   anomaly_detection:
     image: webiks/anomaly-detection-app:latest
-    container_name: anomaly_detections
+    container_name: anomaly_detection
     ports:
-      - 56000:56000
+      - 55000:55000
     env_file:
       - ./.env
+    extra_hosts:
+      - "elastic.monitor.net:44.225.165.227"

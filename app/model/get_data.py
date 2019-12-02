@@ -4,8 +4,7 @@ import pandas as pd
 
 import elasticsearch
 import elasticsearch_dsl
-
-logger = logging.getLogger(__name__)
+from elasticsearch import logger as es_logger
 
 from app.model.elastic_agg_to_df import build_generic_aggregations_dataframe
 
@@ -120,14 +119,14 @@ def get_data(index, from_time, to_time, host, port, user, password, options):
         hosts = [{"host": host, "port": port}]
         http_auth = (user, password)
         elastic_client = elasticsearch.Elasticsearch(hosts=hosts, http_auth=http_auth)
-        logger.debug(elastic_client)
+        es_logger.debug(elastic_client)
 
         search = elasticsearch_dsl.Search(using=elastic_client)
-        logger.debug(search)
+        es_logger.debug(search)
 
         search, count_fields, extended_fields, iqr_fields = build_query(search, index, from_time, to_time, options)
         response = search.execute()
-        logger.debug(search)
+        es_logger.debug(search)
 
         if len(response.aggregations.timestamp.buckets) == 0:
             return None
