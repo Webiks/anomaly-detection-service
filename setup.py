@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 setup(
     name='Anomaly Detection Service',
     version='0.1.0',
-    packages=["pyyaml"],
+    packages=[],
     license='MIT',
     description='anomaly detection service',
     author='Chaim Paciorkowski',
