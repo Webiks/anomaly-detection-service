@@ -6,7 +6,6 @@ load_dotenv()
 
 def override(config):
     env = os.environ
-    # print(env)
     for k, v in env.items():
         kwords = k.lower().split('_')
 
