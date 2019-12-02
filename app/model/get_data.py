@@ -10,6 +10,8 @@ from app.model.elastic_agg_to_df import build_generic_aggregations_dataframe
 
 logger = logging.getLogger(__name__)
 
+print(f'es_logger.level {es_logger.level}')
+
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 
