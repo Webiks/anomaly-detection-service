@@ -46,7 +46,7 @@ def get_input(traceId, index, from_time, to_time, host, port, user, password,
         logger.debug(f'Getting data from elasticsearch with index: {index} from_time: {from_time} '
                      f'to_time: {to_time} host: {host} port: {port} '
                      f'user: {user} password: {cfg.secret} and options {options}', extra=d)
-        X = get_elastic_data(index, from_time, to_time, host, port, user, password, options)  # TODO document this
+        X = get_elastic_data(index, from_time, to_time, host, port, user, password, options, traceId)
 
         if X is not None:
             X['timestamp'] = X['timestamp'].astype('int64') * 1000000
