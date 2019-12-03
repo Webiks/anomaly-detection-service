@@ -9,5 +9,4 @@ services:
     env_file:
       - ./.env
     extra_hosts:
-      - "elastic.monitor.net:$ADDRE
-      - 
+      - "elastic.monitor.net:${ADDRESS}
