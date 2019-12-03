@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   anomaly_detection:
-    image:  223455578796.dkr.ecr.us-west-2.amazonaws.com/anomaly-detection-app:latest
+    image:  223455578796.dkr.ecr.us-west-2.amazonaws.com/monitor-anomaly-detection:latest
     container_name: anomaly_detection
     ports:
       - 56000:55000
