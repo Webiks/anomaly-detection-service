@@ -1,3 +1,3 @@
 #!/bin/bash
-export ADDRESS=44.225.165.227
+export ADDRESS=<elastic host ip goes here>
 docker-compose -f docker-compose.prod.yml up -d
