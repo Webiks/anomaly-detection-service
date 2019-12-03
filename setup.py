@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='Anomaly Detection Service',
-    version='0.1.0',
+    version='0.1.1',
     packages=[],
     license='MIT',
     description='anomaly detection service',
