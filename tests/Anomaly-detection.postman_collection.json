@@ -1,0 +1,159 @@
+{
+	"info": {
+		"_postman_id": "8d6c8e17-ba75-4c3c-aa8a-5fb83eb07c03",
+		"name": "Anomaly-detection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://elastic.monitor.net:56000/health",
+					"protocol": "http",
+					"host": [
+						"elastic",
+						"monitor",
+						"net"
+					],
+					"port": "56000",
+					"path": [
+						"health"
+					]
+				},
+				"description": "Get the health of the server"
+			},
+			"response": []
+		},
+		{
+			"name": "Interval",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://elastic.monitor.net:56000/model/scheduler/interval",
+					"protocol": "http",
+					"host": [
+						"elastic",
+						"monitor",
+						"net"
+					],
+					"port": "56000",
+					"path": [
+						"model",
+						"scheduler",
+						"interval"
+					]
+				},
+				"description": "Get the interval of running prediction"
+			},
+			"response": []
+		},
+		{
+			"name": "Stop",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://elastic.monitor.net:56000/model/scheduler/stop",
+					"protocol": "http",
+					"host": [
+						"elastic",
+						"monitor",
+						"net"
+					],
+					"port": "56000",
+					"path": [
+						"model",
+						"scheduler",
+						"stop"
+					]
+				},
+				"description": "Manually stopping the scheduler that runs the prediction"
+			},
+			"response": []
+		},
+		{
+			"name": "Predict",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"from_time\": \"2019-12-02T18:00:00.000Z\",\n\t\"to_time\": \"2019-12-02T18:10:00.000Z\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://elastic.monitor.net:56000/model/predict",
+					"protocol": "http",
+					"host": [
+						"elastic",
+						"monitor",
+						"net"
+					],
+					"port": "56000",
+					"path": [
+						"model",
+						"predict"
+					]
+				},
+				"description": "Manually run prediction one time only\r\nRequired: a JSON payload with from_timke and to_time attributes"
+			},
+			"response": []
+		},
+		{
+			"name": "Start",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"interval\": 300\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://elastic.monitor.net:56000/model/scheduler/start",
+					"protocol": "http",
+					"host": [
+						"elastic",
+						"monitor",
+						"net"
+					],
+					"port": "56000",
+					"path": [
+						"model",
+						"scheduler",
+						"start"
+					]
+				},
+				"description": "Restart the scheduler that runs a prediction \r\nOptional: a JSON payload with interval attributes"
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
