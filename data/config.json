@@ -7,7 +7,8 @@
   },
 
   "slack": {
-    "username": "S.H.I.E.L.D",
+    "username": "Webiks Cyber Team",
+    "channel": "",
     "icon": ":shield:",
     "webhook": "http://localhost:port/override/this/url/from/env/attr",
     "message": " anomaly detection alerts were published in Elastic. <{}|click here> to view it on Kibana",
