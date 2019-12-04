@@ -1,0 +1,13 @@
+version: '3.7'
+
+services:
+  anomaly_detection:
+    image:  223455578796.dkr.ecr.us-west-2.amazonaws.com/monitor-anomaly-detection:latest
+    restart: always
+    container_name: anomaly_detection
+    ports:
+      - 56000:55000
+    env_file:
+      - ./.env
+    extra_hosts:
+      - "elastic.monitor.net:${ADDRESS}"

@@ -1,0 +1,54 @@
+{
+  "server": {
+    "host": "0.0.0.0",
+    "port": 55000,
+    "debug": false,
+    "testMode": true
+  },
+
+  "slack": {
+    "username": "Webiks Cyber Team",
+    "channel": "",
+    "icon": ":shield:",
+    "webhook": "http://localhost:port/override/this/url/from/env/attr",
+    "message": " anomaly detection alerts were published in Elastic. <{}|click here> to view it on Kibana",
+    "link2kibana": "http://localhost:port/override/this/url/from/env/attr"
+  },
+
+  "scheduler": {
+    "interval": 90
+  },
+
+  "logging": {
+    "yaml": "./data/log_config.yml"
+  },
+
+  "model" : {
+    "name": "Isolation Forest Model",
+    "pathname": "./data/model_V0_c0.001.clf",
+    "column": ["timestamp", "host"],
+    "ascending": ["False", "True"]
+  },
+
+  "elasticsearch": {
+    "host": "elastic.monitor.net",
+    "port": 9200,
+    "username": "elastic",
+    "password": "enter a password in .env file"
+  },
+
+  "anomaly_index": {
+    "name": "alert",
+    "settings": {
+      "number_of_shards": 2
+    }
+  },
+
+  "data_args": {
+    "index": "metricbeat-*",
+    "from_time": "now-15m",
+    "to_time": "now",
+    "options_path": "./data/options.json"
+  },
+  "secret": "********"
+}
