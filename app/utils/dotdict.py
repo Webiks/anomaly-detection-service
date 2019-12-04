@@ -1,7 +1,6 @@
 import json
 import copy
 
-
 # based on class dotdict(dict):  # from http://stackoverflow.com/questions/224026/dot-notation-for-dictionary-keys
 class dotdict(dict):  # Similar to bunch, but less, and JSON-centric
 
